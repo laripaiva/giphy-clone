@@ -1,28 +1,46 @@
 <template>
-  <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
-  </div>
+  <v-app>
+    <Toolbar />
+    <v-content>
+      <SearchButton />
+      <!-- <Response /> -->
+      <div id="app2">
+        {{data[0]["type"]}}
+        {{data[0]["id"]}}
+        {{data[0]["slug"]}}
+        {{data[0]["url"]}}
+        {{data[0]}}
+      </div>
+    </v-content>
+  </v-app>
 </template>
 
+
 <script>
-import HelloWorld from './components/HelloWorld.vue'
+import Toolbar from "./components/Toolbar";
+import SearchButton from "./components/SearchButton";
+import Response from "./components/Response";
+// import axios from "./services/axios";
+import axios from "axios";
 
 export default {
-  name: 'app',
+  name: "app",
   components: {
-    HelloWorld
+    Toolbar,
+    SearchButton,
+    Response
+  },
+  data() {
+    return {
+      data: []
+    };
+  },
+  mounted() {
+    axios
+      .get(
+        "https://api.giphy.com/v1/gifs/trending?api_key=EUzSRkJo88fyanTPGTeEcuXOulKtgIwB&limit=1&rating=G"
+      )
+      .then(response => (this.data = response.data.data));
   }
-}
+};
 </script>
-
-<style>
-#app {
-  font-family: 'Avenir', Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
-}
-</style>
