@@ -4,7 +4,7 @@
     <v-container>
       <v-text-field v-model="search" label="Search Gif" required></v-text-field>
 
-      <v-btn color="pink" class="white--text" @click.native="getGif(1)">submit</v-btn>
+      <v-btn color="pink" class="white--text" @click.native="infiniteHandler()">submit</v-btn>
       <v-item-group>
         <v-row>
           <v-col v-for="g in gif" :key="g.id" cols="12" sm="4" lg="3">
@@ -16,7 +16,7 @@
           </v-col>
         </v-row>
       </v-item-group>
-      <!-- <infinite-loading @infinite="infiniteHandler" spinner="bubbles"></infinite-loading> -->
+      <infinite-loading :identifier="infiniteId" @infinite="infiniteHandler"></infinite-loading>
     </v-container>
   </v-app>
 </template>
@@ -24,7 +24,10 @@
 
 <script>
 import Toolbar from "./components/Toolbar";
+import InfiniteLoading from "vue-infinite-loading";
 import axios from "axios";
+
+let type;
 
 export default {
   name: "app",
@@ -33,27 +36,28 @@ export default {
   },
   data() {
     return {
+      page: 1,
+      infiniteId: +new Date(),
       gif: [],
       search: ""
     };
   },
   methods: {
-    getGif(t) {
+    infiniteHandler($state) {
       const url = "https://api.giphy.com/v1/gifs/";
       const key = "EUzSRkJo88fyanTPGTeEcuXOulKtgIwB";
       const limit = 12;
-      let type = "";
       let search = "";
 
-      if (t === null) {
-        type = "trending";
+      if (type == "trending") {
         axios
           .get(url + type + "?api_key=" + key + "&limit=" + limit + "&rating=G")
           .then(response => {
             this.gif = response.data.data;
+            $state.loaded();
           });
-      } else {
         type = "search?";
+      } else {
         axios
           .get(
             url +
@@ -72,8 +76,11 @@ export default {
       }
     }
   },
+  beforeMount() {
+    type = "trending";
+  },
   mounted() {
-    this.getGif(null);
+    this.infiniteHandler();
   }
 };
 </script>
