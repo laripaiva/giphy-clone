@@ -1,2 +1,2 @@
 
-First project to introduce Vue.js, consuming the Giphy API through Axios. 
+First introductory project to Vue.js, consuming the API Giphy through Axios.
